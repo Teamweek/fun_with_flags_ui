@@ -24,25 +24,35 @@
     </nav>
 
     <div class="container mt-3">
-      <h1><%= html_safe(@flag.name) %></h1>
+      <h1>
+        <%= html_safe(@flag.name) %>
 
-      <div id="boolean_gate" class="row mb-3">
-        <div class="col">
-          <div class="card">
-            <h5 class="card-header">
-              Default state
-            </h5>
-            <%= _boolean_row(conn: @conn, flag: @flag) %>
-          </div>
-        </div>
-      </div>
+        <%= case Utils.boolean_gate_open?(@flag) do %>
+          <% :missing -> %>
+            <span class="badge badge-default">Disabled (missing)</span>
+
+          <% {:ok, false} -> %>
+            <span class="badge badge-danger">Disabled</span>
+
+          <% {:ok, true} -> %>
+            <span class="badge badge-success">Enabled</span>
+
+        <% end %>
+      </h1>
 
       <div id="actor_gates" class="row mb-3">
         <div class="col">
           <div class="card">
-            <h5 class="card-header">
-              Actors
-            </h5>
+            <div class="card-header">
+              <h5 class="card-title">Actors</h5>
+              <p class="card-text">
+                Used to target a specific entity given its ID. e.g
+                <code>user:1234</code>,
+                <code>member:1234</code>, or
+                <code>workspace:1234</code>
+              </p>
+            </div>
+
             <ul class="list-group list-group-flush fwf-gate-list">
               <% actor_gates = Utils.actor_gates(@flag) %>
 
@@ -69,9 +79,9 @@
       <div id="group_gates" class="row mb-3">
         <div class="col">
           <div class="card">
-            <h5 class="card-header">
-              Groups
-            </h5>
+            <div class="card-header">
+              <h5 class="card-title">Groups</h5>
+            </div>
             <ul class="list-group list-group-flush fwf-gate-list">
               <% group_gates = Utils.group_gates(@flag) %>
 
@@ -125,17 +135,32 @@
 
       <div id="danger_zone" class="row mb-3">
         <div class="col">
-          <div class="card">
+          <div class="card" style="border: 1px solid #d9534f;">
             <h5 class="card-header">
               Danger Zone
             </h5>
-            <div class="card-block">
-              <form id="fwf-delete-flag-form" action="<%= path(@conn, "/flags/#{html_safe(@flag.name)}") %>" method="post">
-                <input type="hidden" name="_method" value="DELETE">
-                <input type="hidden" name="_csrf_token" value="<%= @conn.assigns[:csrf_token] %>">
-                <button type="submit" class="btn btn-danger" data-confirm="Are you sure you want to completely delete the flag '<%= html_safe(@flag.name) %>'?">Delete Flag</button>
-              </form>
-            </div>
+            <ul class="list-group list-group-flush">
+              <%= _boolean_row(conn: @conn, flag: @flag) %>
+
+              <li class="list-group-item">
+                <div class="w-100 d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="font-weight-bold">
+                      Delete feature flag
+                    </h6>
+                    <p class="text-sm mb-0">
+                      Deletes the feature flag from existence. Please be careful.
+                    </p>
+                  </div>
+
+                  <form id="fwf-delete-flag-form" action="<%= path(@conn, "/flags/#{html_safe(@flag.name)}") %>" method="post">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="hidden" name="_csrf_token" value="<%= @conn.assigns[:csrf_token] %>">
+                    <button type="submit" class="btn btn-outline-danger" data-confirm="Are you sure you want to completely delete the flag '<%= html_safe(@flag.name) %>'?">Delete Flag</button>
+                  </form>
+                </div>
+              </li>
+            </ul>
           </div>
         </div>
       </div>

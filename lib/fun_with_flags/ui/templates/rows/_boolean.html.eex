@@ -7,34 +7,97 @@
   form_path = path(@conn, "/flags/#{html_safe(@flag.name)}/boolean")
 %>
 
-<div class="card-block">
-  <span class="fwf-global-flag-status">
-    <%= html_status_for status %>
+<%= if !is_enabled or (status == :missing) do %>
+  <li class="list-group-item">
+    <div class="w-100 d-flex justify-content-between align-items-center">
+      <div>
+        <h6 class="font-weight-bold">
+          Enable boolean gate
+        </h6>
+        <p class="text-sm mb-0">
+          Enabling the boolean gate will enable this flag by default, but can
+          still be disabled via the actor and/or group gates.
+        </p>
+      </div>
 
-    <%= if is_enabled or (status == :missing) do %>
-      <form id="fwf-global-toggle-form" action="<%= form_path %>" method="post" class="fwf-inline-toggle">
-        <input type="hidden" name="_method" value="PATCH">
-        <input type="hidden" name="_csrf_token" value="<%= @conn.assigns[:csrf_token] %>">
-        <input type="hidden" name="enabled" value="false">
-        <button id="disable-boolean-btn" type="submit" class="btn btn-sm btn-outline-danger">Disable</button>
-      </form>
-    <% end %>
+        <form id="fwf-global-toggle-form" action="<%= form_path %>" method="post" class="fwf-inline-toggle">
+          <input type="hidden" name="_method" value="PATCH">
+          <input type="hidden" name="_csrf_token" value="<%= @conn.assigns[:csrf_token] %>">
+          <input type="hidden" name="enabled" value="true">
+          <button
+            id="enable-boolean-btn"
+            type="submit"
+            class="btn btn-outline-success"
+            data-confirm="Are you sure you want to enable the boolean gate for the feature flag <%= @flag.name %>?"
+          >
+            Enable gate
+            <%= if status == :missing do %>
+            explicitly
+            <% end %>
+          </button>
+        </form>
+    </div>
+  </li>
+<% end %>
 
-    <%= if !is_enabled or (status == :missing) do %>
-      <form id="fwf-global-toggle-form" action="<%= form_path %>" method="post" class="fwf-inline-toggle">
-        <input type="hidden" name="_method" value="PATCH">
-        <input type="hidden" name="_csrf_token" value="<%= @conn.assigns[:csrf_token] %>">
-        <input type="hidden" name="enabled" value="true">
-        <button id="enable-boolean-btn" type="submit" class="btn btn-sm btn-outline-success">Enable</button>
-      </form>
-    <% end %>
+<%= if is_enabled or (status == :missing) do %>
+  <li class="list-group-item">
+    <div class="w-100 d-flex justify-content-between align-items-center">
+      <div>
+        <h6 class="font-weight-bold">
+          Disable boolean gate
+        </h6>
+        <p class="text-sm mb-0">
+          Disabling the boolean gate will disable this flag by default, but can
+          still be enabled via the actor and/or group gates.
+        </p>
+      </div>
 
-    <%= unless status == :missing do %>
-      <form action="<%= form_path %>" method="post" class="float-right">
-        <input type="hidden" name="_method" value="DELETE">
-        <input type="hidden" name="_csrf_token" value="<%= @conn.assigns[:csrf_token] %>">
-        <button id="clear-boolean-btn" type="submit" class="btn btn-sm btn-secondary" data-confirm="Are you sure you want to clear the boolean gate? A missing boolean gate will be the same a as disabled boolean gate, and this option is provided mainly for debugging purposes.">Clear</button>
-      </form>
-    <% end %>
-  </span>
-</div>
+        <form id="fwf-global-toggle-form" action="<%= form_path %>" method="post" class="fwf-inline-toggle">
+          <input type="hidden" name="_method" value="PATCH">
+          <input type="hidden" name="_csrf_token" value="<%= @conn.assigns[:csrf_token] %>">
+          <input type="hidden" name="enabled" value="false">
+          <button
+            id="disable-boolean-btn"
+            type="submit"
+            class="btn btn-outline-danger"
+            data-confirm="Are you sure you want to disable the boolean gate for the feature flag <%= @flag.name %>?"
+          >
+            Disable gate
+            <%= if status == :missing do %>
+            explicitly
+            <% end %>
+          </button>
+        </form>
+    </div>
+  </li>
+<% end %>
+
+<%= unless status == :missing do %>
+  <li class="list-group-item">
+    <div class="w-100 d-flex justify-content-between align-items-center">
+      <div>
+        <h6 class="font-weight-bold">
+          Clear gate
+        </h6>
+        <p class="text-sm mb-0">
+          Clears/removes the boolean gate. This will still be treated the same
+          as a disabled boolean gate.
+        </p>
+      </div>
+
+        <form id="fwf-global-toggle-form" action="<%= form_path %>" method="post" class="fwf-inline-toggle">
+          <input type="hidden" name="_method" value="DELETE">
+          <input type="hidden" name="_csrf_token" value="<%= @conn.assigns[:csrf_token] %>">
+          <button
+            id="clear-boolean-btn"
+            type="submit"
+            class="btn btn-secondary"
+            data-confirm="Are you sure you want to clear the boolean gate for the feature flag <%= @flag.name %>? A missing boolean gate will be the same a as disabled boolean gate, and this option is provided mainly for debugging purposes."
+          >
+            Clear boolean gate
+          </button>
+        </form>
+    </div>
+  </li>
+<% end %>
