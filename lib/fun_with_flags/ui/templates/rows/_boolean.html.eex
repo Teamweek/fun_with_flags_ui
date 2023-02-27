@@ -78,7 +78,7 @@
     <div class="w-100 d-flex justify-content-between align-items-center">
       <div>
         <h6 class="font-weight-bold">
-          Clear gate
+          Clear boolean gate
         </h6>
         <p class="text-sm mb-0">
           Clears/removes the boolean gate. This will still be treated the same
@@ -95,7 +95,7 @@
             class="btn btn-secondary"
             data-confirm="Are you sure you want to clear the boolean gate for the feature flag <%= @flag.name %>? A missing boolean gate will be the same a as disabled boolean gate, and this option is provided mainly for debugging purposes."
           >
-            Clear boolean gate
+            Clear gate
           </button>
         </form>
     </div>
