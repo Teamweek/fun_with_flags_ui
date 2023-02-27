@@ -46,7 +46,8 @@
       # If you want to enforce a style guide and need a more traditional linting
       # experience, you can change `strict` to `true` below:
       #
-      strict: true, # false,
+      # false,
+      strict: true,
       #
       # To modify the timeout for parsing files, change this value:
       #
@@ -201,7 +202,7 @@
           # {Credo.Check.Refactor.MapInto, []},
 
           {Credo.Check.Design.AliasUsage, []},
-          {Credo.Check.Readability.PreferImplicitTry, []},
+          {Credo.Check.Readability.PreferImplicitTry, []}
 
           #
           # Custom checks can be created using `mix credo.gen.check`.
