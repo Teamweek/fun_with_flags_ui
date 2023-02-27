@@ -69,7 +69,7 @@ defmodule FunWithFlags.UI.TemplatesTest do
       out = Templates.details(conn: conn, flag: flag)
       assert String.contains?(out, "<title>FunWithFlags - avocado</title>")
       assert String.contains?(out, ~s{<a href="/pear/new" class="btn btn-secondary">New Flag</a>})
-      assert String.contains?(out, "<h1>avocado</h1>")
+      assert String.contains?(out, "<h1>\n        avocado")
     end
 
     test "it includes the CSRF token", %{conn: conn, flag: flag} do
@@ -112,16 +112,32 @@ defmodule FunWithFlags.UI.TemplatesTest do
       flag: flag
     } do
       out = Templates.details(conn: conn, flag: flag)
-      assert String.contains?(out, ~s{<button id="enable-boolean-btn" type="submit"})
-      assert String.contains?(out, ~s{<button id="disable-boolean-btn" type="submit"})
+
+      assert String.contains?(
+               out,
+               ~s{<button\n            id="enable-boolean-btn"\n            type="submit"}
+             )
+
+      assert String.contains?(
+               out,
+               ~s{<button\n            id="disable-boolean-btn"\n            type="submit"}
+             )
     end
 
     test "with an enabled boolean gate, it includes both the disable and clear boolean buttons",
          %{conn: conn, flag: flag} do
       f = %Flag{flag | gates: [Gate.new(:boolean, true)]}
       out = Templates.details(conn: conn, flag: f)
-      assert String.contains?(out, ~s{<button id="disable-boolean-btn" type="submit"})
-      assert String.contains?(out, ~s{<button id="clear-boolean-btn" type="submit"})
+
+      assert String.contains?(
+               out,
+               ~s{<button\n            id="disable-boolean-btn"\n            type="submit"}
+             )
+
+      assert String.contains?(
+               out,
+               ~s{<button\n            id="clear-boolean-btn"\n            type="submit"}
+             )
     end
 
     test "with a disabled boolean gate, it includes both the enable and clear boolean buttons", %{
@@ -130,8 +146,16 @@ defmodule FunWithFlags.UI.TemplatesTest do
     } do
       f = %Flag{flag | gates: [Gate.new(:boolean, false)]}
       out = Templates.details(conn: conn, flag: f)
-      assert String.contains?(out, ~s{<button id="enable-boolean-btn" type="submit"})
-      assert String.contains?(out, ~s{<button id="clear-boolean-btn" type="submit"})
+
+      assert String.contains?(
+               out,
+               ~s{<button\n            id="enable-boolean-btn"\n            type="submit"}
+             )
+
+      assert String.contains?(
+               out,
+               ~s{<button\n            id="clear-boolean-btn"\n            type="submit"}
+             )
     end
 
     test "with no gates it reports the lists as empty", %{conn: conn, flag: flag} do
